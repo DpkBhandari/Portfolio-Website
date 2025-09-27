@@ -1,0 +1,29 @@
+Frontend Home Component (static)
+
+Build one Home.jsx with photo, heading, paragraph placeholder.
+
+Admin Page (frontend only)
+
+Simple form with inputs for heading, paragraph, and image upload.
+
+For now, store in local state.
+
+Backend Setup
+
+Create API (Node + Express + DB).
+
+Routes: GET /home, POST /home, PUT /home.
+
+Education Section
+
+Add education form in admin.
+
+Add API endpoints for education.
+
+Fetch and display on home page.
+
+Integration
+
+Home page fetches data from backend.
+
+Admin manages content through backend APIs.

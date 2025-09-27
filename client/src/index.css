@@ -1,0 +1,30 @@
+/* Nunito Font */
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
+
+/* Montserrat Font */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-main: "Nunito Sans", sans-serif;
+  --font-head: "Montserrat", sans-serif;
+
+  /* Colors */
+  --color-custom-blue: #5badff;
+  --color-secondary: #8491a0;
+  --color-primary: #ffffff;
+  --color-card: #2a2a2a;
+  --color-bg: #161513;
+  --color-custom-orange: #ff4000;
+  --color-hover: #f0f0f0;
+  --color-gradient: radial-gradient(
+    circle,
+    rgba(242, 0, 0, 1) 0%,
+    rgba(189, 0, 157, 1) 50%,
+    rgba(255, 89, 0, 1) 100%
+  );
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
