@@ -75,7 +75,7 @@ function Navbar() {
         {/* Dark Mode Button */}
         <button
           aria-label="Dark mode"
-          className="mb-2 md:mb-0 md:ml-4 flex items-center text-gray-600 dark:text-white"
+          className="mb-2 md:mb-0 md:ml-4 cursor-pointer flex items-center text-gray-600 dark:text-white"
           onClick={() => setDarkmode(!darkMode)}
         >
           {darkMode ? "Light Mode" : "Dark mode"}

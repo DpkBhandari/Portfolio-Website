@@ -1,91 +1,261 @@
 import { useEffect } from "react";
-import portrait from "../../assets/portrait.jpg";
 import { NavLink } from "react-router-dom";
+import {
+  FaEnvelope,
+  FaFileDownload,
+  FaGraduationCap,
+  FaCode,
+  FaLaptopCode,
+} from "react-icons/fa";
+import portrait from "../../assets/portrait.jpg";
 import { data } from "../data.js";
 
 function Home() {
   useEffect(() => {
-    document.title = "Home | Deepak Bhanari Portfolio";
+    document.title = "Home | Deepak Bhandari Portfolio";
+    // Smooth scroll to top on mount
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
-    <main className="min-h-screen w-screen flex p-12 flex-col gap-12 items-center justify-around bg-primary dark:bg-bg  px-4 sm:px-8">
-      {/* Profile Image */}
-      <div>
-        <img
-          src={portrait}
-          alt="Deepak Bhanari Portrait"
-          className="h-60 w-60 rounded-full bg-white dark:bg-card object-cover shadow-lg transition-transform duration-500 hover:scale-110"
-        />
-      </div>
+    <main className="min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
+      {/* Hero Section */}
+      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-8 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-32 h-32 sm:w-48 sm:h-48 bg-blue-200 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-30 animate-blob"></div>
+          <div className="absolute top-40 right-10 w-32 h-32 sm:w-48 sm:h-48 bg-purple-200 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-20 left-1/2 w-32 h-32 sm:w-48 sm:h-48 bg-pink-200 dark:bg-pink-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        </div>
 
-      {/* Heading + About */}
-      <div className="flex flex-col gap-6 items-center text-center max-w-3xl">
-        <h1 className="font-head font-bold text-3xl sm:text-4xl md:text-5xl text-black dark:text-primary leading-snug">
-          I do code and make content{" "}
-          <span className="bg-red-700 bg-clip-text text-transparent text-4xl sm:text-5xl">
-            about it!
-          </span>
-        </h1>
+        <div className="relative max-w-6xl mx-auto flex flex-col items-center gap-12">
+          {/* Profile Image with decorative elements */}
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full opacity-75 blur-xl group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+            <div className="relative">
+              <img
+                src={portrait}
+                alt="Deepak Bhandari - Full Stack Developer"
+                className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 rounded-full object-cover shadow-2xl 
+                border-4 border-white dark:border-gray-800 
+                transition-transform duration-500 group-hover:scale-105"
+                loading="eager"
+              />
+              {/* Status indicator */}
+              <div className="absolute bottom-4 right-4 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 animate-pulse"></div>
+            </div>
+          </div>
 
-        <p className="font-main font-medium text-lg sm:text-xl text-secondary px-4">
-          I am a passionate BCA student skilled in web development, coding, and
-          creating digital content. I enjoy building projects, learning new
-          technologies, and turning ideas into practical solutions.
-        </p>
-      </div>
+          {/* Heading + About */}
+          <div className="flex flex-col gap-6 items-center text-center max-w-4xl">
+            {/* Greeting badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium">
+              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+              Available for opportunities
+            </div>
 
-      {/* Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center">
-        <NavLink
-          to="/contact"
-          className="px-6 py-3 sm:px-8 sm:py-4 text-md sm:text-lg md:text-xl font-semibold bg-black text-primary rounded-full hover:bg-[--color-custom-blue] hover:text-black transition-colors duration-300 dark:bg-primary dark:text-black"
-        >
-          Get In Touch
-        </NavLink>
-        <NavLink
-          to="/contact"
-          className="px-6 py-3 sm:px-8 sm:py-4 text-md sm:text-lg md:text-xl font-semibold border-2 border-black rounded-full hover:border-[--color-custom-blue] hover:text-white transition-colors duration-300 dark:border-primary dark:text-primary"
-        >
-          Download CV
-        </NavLink>
-      </div>
+            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-white leading-tight">
+              I do code and make content{" "}
+              <span className="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                about it!
+              </span>
+            </h1>
+
+            <p className="font-medium text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl px-4">
+              I am a passionate{" "}
+              <strong className="text-blue-600 dark:text-blue-400">
+                BCA student
+              </strong>{" "}
+              skilled in web development, coding, and creating digital content.
+              I enjoy building projects, learning new technologies, and turning
+              ideas into practical solutions.
+            </p>
+
+            {/* Tech stack badges */}
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
+              {[
+                "React",
+                "Node.js",
+                "MongoDB",
+                "Express.js",
+                "JavaScript",
+                "Tailwind CSS",
+              ].map((tech, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm font-medium rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto px-4">
+            <NavLink
+              to="/contact"
+              className="group relative flex items-center justify-center gap-3 
+              px-6 sm:px-8 py-3 sm:py-4 
+              bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700
+              text-white font-semibold text-base sm:text-lg 
+              rounded-full shadow-lg hover:shadow-2xl 
+              transform hover:scale-105 transition-all duration-300 
+              focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800
+              w-full sm:w-auto"
+            >
+              <FaEnvelope className="text-xl group-hover:rotate-12 transition-transform duration-300" />
+              <span>Get In Touch</span>
+            </NavLink>
+
+            <a
+              href="/Deepak Bhandari - Backend Developer (node,express.js) Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-center gap-3 
+              px-6 sm:px-8 py-3 sm:py-4 
+              bg-white dark:bg-gray-800 
+              hover:bg-gray-50 dark:hover:bg-gray-700
+              text-gray-800 dark:text-white font-semibold text-base sm:text-lg 
+              rounded-full shadow-lg hover:shadow-2xl 
+              border-2 border-gray-300 dark:border-gray-600
+              transform hover:scale-105 transition-all duration-300 
+              focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600
+              w-full sm:w-auto"
+            >
+              <FaFileDownload className="text-xl group-hover:translate-y-1 transition-transform duration-300" />
+              <span>View Resume</span>
+            </a>
+          </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-3 gap-4 sm:gap-8 w-full max-w-2xl mt-8">
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                <FaCode className="inline" />
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                Projects Built
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+                <FaLaptopCode className="inline" />
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                Technologies
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-600 dark:text-pink-400 mb-1">
+                <FaGraduationCap className="inline" />
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                Years Learning
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Education Section */}
-      <h1 className="text-center text-custom-blue text-3xl font-bold text-shadow-2xl">
-        EDUCATION
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full justify-items-center mb-12">
-        {data.map((edu, index) => (
-          <EducationCard key={index} {...edu} />
-        ))}
-      </div>
+      <section className="py-16 sm:py-20 px-4 sm:px-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+              <FaGraduationCap className="text-3xl text-white" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              Education
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              My academic journey and qualifications that shaped my skills
+            </p>
+          </div>
+
+          {/* Education Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {data.map((edu, index) => (
+              <EducationCard key={index} {...edu} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CSS for animations */}
+      <style>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(20px, -20px) scale(1.1); }
+          50% { transform: translate(-20px, 20px) scale(0.9); }
+          75% { transform: translate(20px, 20px) scale(1.05); }
+        }
+        
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </main>
   );
 }
 
 export default Home;
 
-function EducationCard({ img, title, course, result, description }) {
+function EducationCard({ img, title, course, result, description, index }) {
   return (
-    <section className="h-auto w-80 bg-primary dark:bg-card p-4 rounded-2xl shadow-lg transform transition-transform duration-300 hover:scale-105">
-      <img
-        src={img}
-        alt={`${title} Logo`}
-        className="w-full h-40 object-cover rounded-2xl shadow-md mb-2"
-      />
-      <div className="text-center">
-        <h2 className="font-head font-bold text-lg sm:text-xl text-bg dark:text-white">
-          {title}
-        </h2>
-        <p className="font-main dark:text-secondary text-card">{course}</p>
-        <span className="font-main text-sm text-green-600 block my-1">
-          {result}
-        </span>
-        <dd className="font-main text-justify tracking-normal whitespace-normal text-secondary text-sm">
-          {description}
-        </dd>
+    <article
+      className="group relative h-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg 
+      hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2 
+      overflow-hidden border border-gray-200 dark:border-gray-700"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      {/* Gradient overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+      {/* Image container */}
+      <div className="relative overflow-hidden">
+        <img
+          src={img}
+          alt={`${title} Logo`}
+          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
+        />
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
-    </section>
+
+      {/* Content */}
+      <div className="relative p-6 space-y-3">
+        <div className="text-center space-y-2">
+          <h3 className="font-bold text-xl sm:text-2xl text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+            {title}
+          </h3>
+          <p className="text-base font-medium text-gray-600 dark:text-gray-400">
+            {course}
+          </p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            {result}
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3 text-justify">
+          {description}
+        </p>
+
+        {/* Bottom accent line */}
+        <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-500"></div>
+      </div>
+    </article>
   );
 }

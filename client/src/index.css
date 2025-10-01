@@ -19,12 +19,7 @@
   --color-bg: #161513;
   --color-custom-orange: #ff4000;
   --color-hover: #f0f0f0;
-  --color-gradient: radial-gradient(
-    circle,
-    rgba(242, 0, 0, 1) 0%,
-    rgba(189, 0, 157, 1) 50%,
-    rgba(255, 89, 0, 1) 100%
-  );
+  --color-hoverBlack: #0e1111;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
