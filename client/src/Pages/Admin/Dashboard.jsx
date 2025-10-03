@@ -21,12 +21,9 @@ function Dashboard() {
       // Fetch projects count
       const projectsRes = await api.get("/api/projects?page=1&limit=1");
 
-      // You can add skills endpoint if you have one
-      // const skillsRes = await api.get("/api/skills?page=1&limit=1");
-
       setStats({
         totalProjects: projectsRes.data?.data?.totalDocs || 0,
-        totalSkills: 0, // Update when skills endpoint is available
+        totalSkills: 0,
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -60,7 +57,7 @@ function Dashboard() {
       title: "Manage Skills",
       desc: "Showcase your technical skills, tools, and areas of expertise.",
       actionButton: "Manage Skills",
-      actionLink: "/admin/skills",
+      actionLink: "/admin/manageskills",
       icon: FaTools,
       color: "from-purple-500 to-purple-600",
       hoverColor: "hover:from-purple-600 hover:to-purple-700",
@@ -72,7 +69,6 @@ function Dashboard() {
   return (
     <main className="min-h-screen w-full bg-gray-50 dark:bg-bg px-4 py-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
             Admin Dashboard
@@ -224,7 +220,7 @@ function Dashboard() {
             </Link>
 
             <Link
-              to="/admin/skills"
+              to="/admin/manageskills"
               className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <FaTools className="text-xl text-purple-600 dark:text-purple-400" />

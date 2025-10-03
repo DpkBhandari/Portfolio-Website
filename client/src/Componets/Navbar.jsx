@@ -29,7 +29,7 @@ function Navbar() {
   return (
     <nav
       role="navigation"
-      className={`flex items-center shadow-inner shadow-2xl justify-between p-2 bg-white dark:bg-card`}
+      className={`flex items-center shadow-inner shadow-2xl justify-between p-2 bg-white z-50 dark:bg-card`}
     >
       {/* Logo */}
       <NavLink to="/">
@@ -45,7 +45,7 @@ function Navbar() {
         aria-label="Toggle menu"
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen(!menuOpen)}
-        className="md:hidden text-3xl mx-6 text-black dark:text-white"
+        className="md:hidden text-3xl z-[1000] mx-6 text-black dark:text-white"
       >
         {menuOpen ? <FaXmark /> : <FaBarsStaggered />}
       </button>
@@ -54,7 +54,7 @@ function Navbar() {
       <ul
         className={`${
           menuOpen ? "block" : "hidden"
-        } md:flex md:flex-row absolute mx-2 md:static top-16 right-0 bg-white dark:bg-card p-4 md:p-0`}
+        } md:flex md:flex-row absolute mx-2 md:static top-16 right-0 bg-white dark:bg-card p-4 z-[9999]  md:p-0`}
       >
         {navLinks.map((link) => (
           <li key={link.to} className="mb-2 md:mb-0 md:ml-4">

@@ -109,12 +109,12 @@ function NotFoundPage() {
               Projects
             </Link>
             <Link
-              to="/about"
+              to="/privacy"
               className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 
               hover:text-blue-800 dark:hover:text-blue-300 
               hover:underline transition-colors duration-200"
             >
-              About
+              Privacy Policy
             </Link>
             <Link
               to="/contact"

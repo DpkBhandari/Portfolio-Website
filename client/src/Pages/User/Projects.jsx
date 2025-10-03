@@ -29,16 +29,21 @@ function Projects() {
     try {
       setLoading(true);
       setError("");
-      const res = await api.get("/api/projects");
-
-      if (res.data?.data?.docs) {
-        setProjects(res.data.data.docs);
-        setFilteredProjects(res.data.data.docs);
-        extractSkills(res.data.data.docs);
+      const res = await api.get("/api/projects?page=1&limit=20");
+      if (res.status === 200 && res.data?.data?.docs) {
+        const docs = res.data.data.docs;
+        setProjects(docs);
+        setFilteredProjects(docs);
+        extractSkills(docs);
+      } else {
+        setError("Failed to fetch projects");
       }
     } catch (err) {
       console.error("Error fetching projects:", err);
-      setError("Failed to load projects. Please try again later.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to load projects. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -47,10 +52,11 @@ function Projects() {
   const extractSkills = (projectsList) => {
     const skillsSet = new Set();
     projectsList.forEach((project) => {
-      const skills = Array.isArray(project.skills)
-        ? project.skills
-        : project.skills?.split(",") || [];
-      skills.forEach((skill) => skillsSet.add(skill.trim()));
+      let arr = [];
+      if (Array.isArray(project.skills)) arr = project.skills;
+      else if (typeof project.skills === "string" && project.skills.length > 0)
+        arr = project.skills.split(",");
+      arr.forEach((skill) => skillsSet.add(skill.trim()));
     });
     setAllSkills(["All", ...Array.from(skillsSet)]);
   };
@@ -68,9 +74,13 @@ function Projects() {
 
     if (selectedSkill !== "All") {
       filtered = filtered.filter((project) => {
-        const skills = Array.isArray(project.skills)
-          ? project.skills
-          : project.skills?.split(",") || [];
+        let skills = [];
+        if (Array.isArray(project.skills)) skills = project.skills;
+        else if (
+          typeof project.skills === "string" &&
+          project.skills.length > 0
+        )
+          skills = project.skills.split(",");
         return skills.some((skill) => skill.trim() === selectedSkill);
       });
     }
@@ -124,6 +134,7 @@ function Projects() {
           </p>
         </div>
 
+        {/* Search & Filter */}
         <div className="bg-white dark:bg-card rounded-xl shadow-lg p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -157,6 +168,7 @@ function Projects() {
           </div>
         </div>
 
+        {/* Projects Grid */}
         {filteredProjects.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-gray-400 text-6xl mb-4">🔍</div>
@@ -181,51 +193,26 @@ function Projects() {
 
 export default Projects;
 
-// --- Updated ProjectCard with Fixed Image Loading ---
+// ---------------- ProjectCard ----------------
 function ProjectCard({ project }) {
   const [imageError, setImageError] = useState(false);
   const hasLiveLink = Boolean(project.liveLink);
 
-  // Fixed image URL handling
-  const getImageUrl = (url) => {
-    if (!url) return "";
-
-    // If it's already a full URL (external like Cloudinary)
-    if (/^https?:\/\//.test(url)) return url;
-
-    // For relative paths
-    const base =
-      import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, "") ||
-      "http://localhost:5000";
-
-    // Remove leading slash if present to avoid double slashes
-    const cleanUrl = url.startsWith("/") ? url.substring(1) : url;
-
-    // Check if it already has 'uploads' in the path
-    const path = cleanUrl.includes("uploads/")
-      ? cleanUrl
-      : `uploads/${cleanUrl}`;
-
-    const finalUrl = `${base}/${path}`;
-
-    // Optional: Log for debugging (remove in production)
-    console.log("Image URL:", finalUrl);
-
-    return finalUrl;
-  };
+  // Skills array
+  let skillArr = [];
+  if (Array.isArray(project.skills)) skillArr = project.skills;
+  else if (typeof project.skills === "string" && project.skills.length > 0)
+    skillArr = project.skills.split(",").map((s) => s.trim());
 
   return (
-    <article className="bg-white dark:bg-card rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden group">
+    <article className="bg-white dark:bg-card rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
       <div className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {project.previewImg && !imageError ? (
           <img
-            src={getImageUrl(project.previewImg)}
+            src={project.previewImg} // Use the URL directly from backend
             alt={project.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => {
-              console.error("Image failed to load:", e.target.src);
-              setImageError(true);
-            }}
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+            onError={() => setImageError(true)}
             loading="lazy"
           />
         ) : (
@@ -233,7 +220,6 @@ function ProjectCard({ project }) {
             <span className="text-6xl">🖼️</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
       </div>
 
       <div className="p-6 flex-1 flex flex-col">
@@ -244,36 +230,23 @@ function ProjectCard({ project }) {
           {project.description || "No description provided"}
         </p>
 
-        {project.skills && (
+        {skillArr.length > 0 && (
           <div className="mb-4">
             <p className="text-sm font-semibold text-green-600 dark:text-green-400 mb-2">
               Technologies:
             </p>
             <div className="flex flex-wrap gap-2">
-              {(Array.isArray(project.skills)
-                ? project.skills
-                : project.skills.split(",")
-              )
-                .slice(0, 4)
-                .map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full"
-                  >
-                    {skill.trim()}
-                  </span>
-                ))}
-              {(Array.isArray(project.skills)
-                ? project.skills
-                : project.skills.split(",")
-              ).length > 4 && (
+              {skillArr.slice(0, 4).map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full"
+                >
+                  {skill}
+                </span>
+              ))}
+              {skillArr.length > 4 && (
                 <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full">
-                  +
-                  {(Array.isArray(project.skills)
-                    ? project.skills
-                    : project.skills.split(",")
-                  ).length - 4}{" "}
-                  more
+                  +{skillArr.length - 4} more
                 </span>
               )}
             </div>

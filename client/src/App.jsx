@@ -22,7 +22,6 @@ import EditHome from "./Pages/Admin/EditHome.jsx";
 import AddProjects from "./Pages/Admin/AddProjects.jsx";
 import Dashboard from "./Pages/Admin/Dashboard.jsx";
 import ChangePassword from "./Pages/Admin/ChangePassword.jsx";
-
 function App() {
   return (
     <Routes>
@@ -38,7 +37,7 @@ function App() {
 
       {/* Admin routes with AdminLayout */}
       <Route path="/admin" element={<AdminLayout />}>
-        {/* Public route */}
+        {/* Public routes */}
         <Route path="login" element={<AdminLogin />} />
         <Route path="change-password" element={<ChangePassword />} />
 

@@ -14,9 +14,9 @@ function Contact() {
 
   const contactInfo = {
     email: "code2deepak@gmail.com",
-    linkedin: "https://x.com/MrDpkBhandari",
+    linkedin: "https://www.linkedin.com/in/deepak-bhandari-500467355/",
     github: "https://github.com/DpkBhandari",
-    twitter: "https://twitter.com/deepak_bhandari",
+    twitter: "https://x.com/MrDpkBhandari",
     instagram: "https://www.instagram.com/mr.dpk.b/",
     whatsapp: "https://wa.me/917083540396",
   };

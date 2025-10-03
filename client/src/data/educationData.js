@@ -1,7 +1,8 @@
 import TilakCollege from "../assets/College/TilakCollege.jpeg";
 import AmCollege from "../assets/College/AmCollege.png";
+import NutanSchool from "../assets/College/NutanSchool.png";
 
-export const data = [
+export const educationData = [
   {
     id: 1,
     img: TilakCollege,
@@ -24,7 +25,7 @@ export const data = [
 
   {
     id: 3,
-    img: AmCollege,
+    img: NutanSchool,
     title: "Nutan Madhyamik Vidyalaya",
     course: "Secondary School Certificate ",
     result: "79.50 %",
