@@ -1,12 +1,108 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { FaHome, FaProjectDiagram, FaTools, FaChartLine } from "react-icons/fa";
+import { useEffect, useState, memo } from "react";
+import {
+  FaHome,
+  FaProjectDiagram,
+  FaBriefcase,
+  FaChartLine,
+} from "react-icons/fa";
 import api from "../../api/axios.js";
+
+// Stat Card Component
+const StatCard = memo(function StatCard({ icon: Icon, label, value, color }) {
+  return (
+    <div className="bg-white dark:bg-card rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 dark:border-gray-800">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            {label}
+          </p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+            {value}
+          </p>
+        </div>
+        <div className={`${color} p-3 rounded-lg`}>
+          <Icon className="text-2xl text-white" />
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// Management Card Component
+const ManagementCard = memo(function ManagementCard({
+  title,
+  description,
+  link,
+  icon: Icon,
+  color,
+  stat,
+  statLabel,
+}) {
+  return (
+    <article className="group bg-white dark:bg-card rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-custom-orange/30 dark:hover:border-custom-orange/30">
+      {/* Icon Header */}
+      <div className={`${color} p-6 flex items-center justify-between`}>
+        <Icon className="text-4xl text-white" />
+        {stat !== undefined && (
+          <div className="text-right text-white">
+            <p className="text-3xl font-bold">{stat}</p>
+            <p className="text-sm opacity-90">{statLabel}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-custom-orange dark:group-hover:text-custom-blue transition-colors">
+          {title}
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+          {description}
+        </p>
+
+        <Link
+          to={link}
+          className="block w-full text-center px-6 py-3 bg-gradient-to-r from-custom-orange to-custom-blue hover:from-custom-orange/90 hover:to-custom-blue/90 text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+        >
+          Manage
+        </Link>
+      </div>
+
+      {/* Hover Indicator */}
+      <div className="h-1 w-0 group-hover:w-full bg-gradient-to-r from-custom-orange to-custom-blue transition-all duration-300" />
+    </article>
+  );
+});
+
+// Quick Action Component
+const QuickAction = memo(function QuickAction({
+  to,
+  icon: Icon,
+  label,
+  color,
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex items-center gap-3 p-4 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-800 hover:border-custom-orange/30 dark:hover:border-custom-orange/30 transition-all duration-300"
+    >
+      <div
+        className={`${color} p-3 rounded-lg group-hover:scale-110 transition-transform duration-300`}
+      >
+        <Icon className="text-xl text-white" />
+      </div>
+      <span className="font-medium text-gray-900 dark:text-white group-hover:text-custom-orange dark:group-hover:text-custom-blue transition-colors">
+        {label}
+      </span>
+    </Link>
+  );
+});
 
 function Dashboard() {
   const [stats, setStats] = useState({
     totalProjects: 0,
-    totalSkills: 0,
+    totalExperiences: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -18,12 +114,17 @@ function Dashboard() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      // Fetch projects count
-      const projectsRes = await api.get("/api/projects?page=1&limit=1");
+
+      const [projectsRes, experiencesRes] = await Promise.all([
+        api.get("/api/projects?page=1&limit=1"),
+        api.get("/api/experience/"),
+      ]);
 
       setStats({
         totalProjects: projectsRes.data?.data?.totalDocs || 0,
-        totalSkills: 0,
+        totalExperiences: Array.isArray(experiencesRes.data?.data)
+          ? experiencesRes.data.data.length
+          : 0,
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -32,212 +133,134 @@ function Dashboard() {
     }
   };
 
-  const dashboardData = [
+  const managementCards = [
     {
-      title: "Edit Home",
-      desc: "Update homepage content, banners, and personal information.",
-      actionButton: "Go to Home Editor",
-      actionLink: "/admin/edithome",
+      title: "Home Page",
+      description:
+        "Update homepage content, hero section, and personal information",
+      link: "/admin/edithome",
       icon: FaHome,
-      color: "from-blue-500 to-blue-600",
-      hoverColor: "hover:from-blue-600 hover:to-blue-700",
+      color: "bg-gradient-to-br from-blue-500 to-blue-600",
     },
     {
-      title: "Manage Projects",
-      desc: "Add, edit, or remove portfolio projects and showcase your work.",
-      actionButton: "Manage Projects",
-      actionLink: "/admin/addproject",
+      title: "Projects",
+      description:
+        "Add, edit, or remove portfolio projects and showcase your work",
+      link: "/admin/addproject",
       icon: FaProjectDiagram,
-      color: "from-green-500 to-green-600",
-      hoverColor: "hover:from-green-600 hover:to-green-700",
+      color: "bg-gradient-to-br from-green-500 to-green-600",
       stat: stats.totalProjects,
       statLabel: "Projects",
     },
     {
-      title: "Manage Skills",
-      desc: "Showcase your technical skills, tools, and areas of expertise.",
-      actionButton: "Manage Skills",
-      actionLink: "/admin/manageskills",
-      icon: FaTools,
-      color: "from-purple-500 to-purple-600",
-      hoverColor: "hover:from-purple-600 hover:to-purple-700",
-      stat: stats.totalSkills,
-      statLabel: "Skills",
+      title: "Experience",
+      description: "Manage your professional experience and work history",
+      link: "/admin/edit-experience",
+      icon: FaBriefcase,
+      color: "bg-gradient-to-br from-purple-500 to-purple-600",
+      stat: stats.totalExperiences,
+      statLabel: "Experiences",
+    },
+  ];
+
+  const quickActions = [
+    {
+      to: "/admin/addproject",
+      icon: FaProjectDiagram,
+      label: "Add Project",
+      color: "bg-green-600",
+    },
+    {
+      to: "/admin/edithome",
+      icon: FaHome,
+      label: "Edit Homepage",
+      color: "bg-blue-600",
+    },
+    {
+      to: "/admin/edit-experience",
+      icon: FaBriefcase,
+      label: "Add Experience",
+      color: "bg-purple-600",
+    },
+    {
+      to: "/",
+      icon: FaChartLine,
+      label: "View Portfolio",
+      color: "bg-custom-orange",
     },
   ];
 
   return (
-    <main className="min-h-screen w-full bg-gray-50 dark:bg-bg px-4 py-8">
+    <main className="min-h-screen w-full bg-white dark:bg-bg p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Admin Dashboard
           </h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-custom-orange to-custom-blue rounded-full mb-3" />
           <p className="text-gray-600 dark:text-gray-400">
-            Welcome back! Manage your portfolio content from here.
+            Welcome back! Manage your portfolio content from here
           </p>
         </div>
 
         {/* Stats Overview */}
-        {!loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white dark:bg-card rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Total Projects
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                    {stats.totalProjects}
-                  </p>
-                </div>
-                <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
-                  <FaProjectDiagram className="text-2xl text-green-600 dark:text-green-400" />
-                </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-card rounded-xl p-6 animate-pulse border border-gray-100 dark:border-gray-800"
+              >
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded" />
               </div>
-            </div>
-
-            <div className="bg-white dark:bg-card rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Total Skills
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                    {stats.totalSkills}
-                  </p>
-                </div>
-                <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
-                  <FaTools className="text-2xl text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-card rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Page Views
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                    -
-                  </p>
-                </div>
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-                  <FaChartLine className="text-2xl text-blue-600 dark:text-blue-400" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-card rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Last Updated
-                  </p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    Today
-                  </p>
-                </div>
-                <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full">
-                  <FaHome className="text-2xl text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              icon={FaProjectDiagram}
+              label="Total Projects"
+              value={stats.totalProjects}
+              color="bg-green-500"
+            />
+            <StatCard
+              icon={FaBriefcase}
+              label="Total Experiences"
+              value={stats.totalExperiences}
+              color="bg-purple-500"
+            />
+            <StatCard
+              icon={FaChartLine}
+              label="Page Views"
+              value="-"
+              color="bg-blue-500"
+            />
+            <StatCard
+              icon={FaHome}
+              label="Last Updated"
+              value="Today"
+              color="bg-custom-orange"
+            />
           </div>
         )}
 
-        {/* Main Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dashboardData.map((item, index) => {
-            const IconComponent = item.icon;
-
-            return (
-              <div
-                key={index}
-                className="bg-white dark:bg-card rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
-              >
-                {/* Gradient Header */}
-                <div
-                  className={`bg-gradient-to-r ${item.color} p-6 text-white`}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <IconComponent className="text-3xl" />
-                    {item.stat !== undefined && (
-                      <div className="text-right">
-                        <p className="text-3xl font-bold">{item.stat}</p>
-                        <p className="text-sm opacity-90">{item.statLabel}</p>
-                      </div>
-                    )}
-                  </div>
-                  <h2 className="text-xl font-bold">{item.title}</h2>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
-                    {item.desc}
-                  </p>
-
-                  {/* Action Button */}
-                  <Link to={item.actionLink}>
-                    <button
-                      className={`w-full bg-gradient-to-r ${item.color} ${item.hoverColor} text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg`}
-                    >
-                      {item.actionButton}
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+        {/* Management Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {managementCards.map((card, index) => (
+            <ManagementCard key={index} {...card} />
+          ))}
         </div>
 
-        {/* Quick Actions Section */}
-        <div className="mt-8 bg-white dark:bg-card rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        {/* Quick Actions */}
+        <div className="bg-white dark:bg-card rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
             Quick Actions
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link
-              to="/admin/addproject"
-              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <FaProjectDiagram className="text-xl text-green-600 dark:text-green-400" />
-              <span className="font-medium text-gray-900 dark:text-white">
-                Add New Project
-              </span>
-            </Link>
-
-            <Link
-              to="/admin/edithome"
-              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <FaHome className="text-xl text-blue-600 dark:text-blue-400" />
-              <span className="font-medium text-gray-900 dark:text-white">
-                Edit Homepage
-              </span>
-            </Link>
-
-            <Link
-              to="/admin/manageskills"
-              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <FaTools className="text-xl text-purple-600 dark:text-purple-400" />
-              <span className="font-medium text-gray-900 dark:text-white">
-                Add New Skill
-              </span>
-            </Link>
-
-            <Link
-              to="/"
-              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <FaChartLine className="text-xl text-orange-600 dark:text-orange-400" />
-              <span className="font-medium text-gray-900 dark:text-white">
-                View Portfolio
-              </span>
-            </Link>
+            {quickActions.map((action, index) => (
+              <QuickAction key={index} {...action} />
+            ))}
           </div>
         </div>
       </div>

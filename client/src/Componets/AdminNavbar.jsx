@@ -1,21 +1,20 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
-import Logo from "../assets/Logo.png";
 
-const navLinks = [
-  { title: "Home", to: "/" },
-  { title: "Projects", to: "/projects" },
-  { title: "Experience", to: "/experience" },
-  { title: "Contact", to: "/contact" },
+const adminLinks = [
+  { title: "Dashboard", to: "/admin/dashboard" },
+  { title: "Edit Home", to: "/admin/edithome" },
+  { title: "Add Project", to: "/admin/addproject" },
+  { title: "Add Experience", to: "/admin/edit-experience" },
 ];
 
-function Navbar() {
+export default function AdminNavbar({ logoutAdmin }) {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Load theme from localStorage
+  // Load theme
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("theme"));
     if (saved !== null) setDarkMode(saved);
@@ -27,19 +26,14 @@ function Navbar() {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // Handle scroll effect
+  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change
-  const handleLinkClick = () => {
-    setMenuOpen(false);
-  };
+  const handleLinkClick = () => setMenuOpen(false);
 
   return (
     <nav
@@ -51,25 +45,17 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <NavLink
-            to="/"
-            className="flex items-center gap-3 group"
+            to="/admin/dashboard"
+            className="text-xl font-bold text-gray-900 dark:text-white"
             onClick={handleLinkClick}
           >
-            <img
-              src={Logo}
-              alt="Deepak Bhandari Logo"
-              className="h-10 w-10 rounded-xl object-cover ring-2 ring-gray-200 dark:ring-gray-700 group-hover:ring-custom-orange dark:group-hover:ring-custom-blue transition-all duration-300"
-            />
-            <span className="hidden sm:block font-bold text-lg text-gray-900 dark:text-white group-hover:text-custom-orange dark:group-hover:text-custom-blue transition-colors duration-300">
-              Deepak Bhandari
-            </span>
+            Admin Panel
           </NavLink>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center gap-2">
+            {adminLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
@@ -85,7 +71,7 @@ function Navbar() {
               </NavLink>
             ))}
 
-            {/* Theme Toggle Button */}
+            {/* Theme toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="ml-2 p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
@@ -97,11 +83,18 @@ function Navbar() {
                 <FaMoon className="text-xl" />
               )}
             </button>
+
+            {/* Logout */}
+            <button
+              onClick={logoutAdmin}
+              className="ml-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition-colors font-medium text-white"
+            >
+              Logout
+            </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-3">
-            {/* Mobile Theme Toggle */}
+          {/* Mobile Menu */}
+          <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
@@ -130,7 +123,7 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Items */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${
           menuOpen
@@ -139,7 +132,7 @@ function Navbar() {
         }`}
       >
         <div className="px-4 py-4 space-y-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-          {navLinks.map((link) => (
+          {adminLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -155,10 +148,14 @@ function Navbar() {
               {link.title}
             </NavLink>
           ))}
+          <button
+            onClick={logoutAdmin}
+            className="w-full mt-2 bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition-colors font-medium text-white"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </nav>
   );
 }
-
-export default Navbar;

@@ -22,6 +22,8 @@ import EditHome from "./Pages/Admin/EditHome.jsx";
 import AddProjects from "./Pages/Admin/AddProjects.jsx";
 import Dashboard from "./Pages/Admin/Dashboard.jsx";
 import ChangePassword from "./Pages/Admin/ChangePassword.jsx";
+
+import ManageExperiences from "./Pages/Admin/ManageExperiences.jsx";
 function App() {
   return (
     <Routes>
@@ -63,6 +65,15 @@ function App() {
           element={
             <ProtectedRoute>
               <AddProjects />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="edit-experience"
+          element={
+            <ProtectedRoute>
+              <ManageExperiences />
             </ProtectedRoute>
           }
         />

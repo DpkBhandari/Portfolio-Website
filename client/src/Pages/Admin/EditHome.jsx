@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { FaEdit, FaSave, FaTimes, FaPlus, FaTrash } from "react-icons/fa";
 import api from "../../api/axios.js";
 
@@ -39,21 +39,19 @@ const INITIAL_HOME_DATA = {
   },
 };
 
-// Helper function to transform stats object to array format
+// Helper functions
 const statsToArray = (stats) => [
   { icon: "FaCode", label: stats.projects || "0" },
   { icon: "FaLaptopCode", label: stats.technologies || "0" },
   { icon: "FaGraduationCap", label: stats.years || "0" },
 ];
 
-// Helper function to transform stats array to object format
 const statsToObject = (statsArray) => ({
   projects: statsArray[0]?.label || "0",
   technologies: statsArray[1]?.label || "0",
   years: statsArray[2]?.label || "0",
 });
 
-// Helper function to normalize API response
 const normalizeHomeData = (apiData) => {
   if (!apiData) return INITIAL_HOME_DATA;
 
@@ -82,79 +80,73 @@ const normalizeHomeData = (apiData) => {
   };
 };
 
-// Input field component
-const InputField = ({
+// Input Field Component
+const InputField = memo(function InputField({
   label,
   value,
   onChange,
   isEditing,
   type = "text",
   multiline = false,
-}) => (
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-      {label}
-    </label>
-    {isEditing ? (
-      multiline ? (
-        <textarea
-          value={value}
-          onChange={onChange}
-          rows={3}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-        />
+  required = false,
+}) {
+  return (
+    <div className="mb-4">
+      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      {isEditing ? (
+        multiline ? (
+          <textarea
+            value={value}
+            onChange={onChange}
+            rows={3}
+            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-custom-orange focus:border-custom-orange transition-all resize-none"
+          />
+        ) : (
+          <input
+            type={type}
+            value={value}
+            onChange={onChange}
+            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-custom-orange focus:border-custom-orange transition-all"
+          />
+        )
       ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={onChange}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-        />
-      )
-    ) : (
-      <p className="text-gray-600 dark:text-gray-400 px-4 py-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
-        {value || <span className="text-gray-400 italic">Not set</span>}
-      </p>
-    )}
-  </div>
-);
-
-// Section wrapper component
-const Section = ({ title, children }) => (
-  <section className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mb-6 transition-all hover:shadow-xl">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">
-      {title}
-    </h2>
-    {children}
-  </section>
-);
-
-// Error message component
-const ErrorMessage = ({ message, onDismiss }) => (
-  <div className="mb-6 flex items-center justify-between text-red-600 bg-red-100 dark:bg-red-900/50 p-4 rounded-lg border border-red-200 dark:border-red-800">
-    <span className="font-medium">{message}</span>
-    {onDismiss && (
-      <button
-        onClick={onDismiss}
-        className="text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100"
-      >
-        <FaTimes />
-      </button>
-    )}
-  </div>
-);
-
-// Loading spinner component
-const LoadingSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
-      <p className="text-lg font-semibold text-blue-600">Loading...</p>
+        <p className="text-gray-700 dark:text-gray-300 px-4 py-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+          {value || <span className="text-gray-400 italic">Not set</span>}
+        </p>
+      )}
     </div>
-  </div>
-);
+  );
+});
 
-// Main component
+// Section Component
+const Section = memo(function Section({ title, children }) {
+  return (
+    <section className="bg-white dark:bg-card rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6 mb-6 transition-all hover:shadow-lg">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+});
+
+// Loading Spinner
+const LoadingSpinner = memo(function LoadingSpinner() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-bg">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-custom-orange border-t-transparent mb-4" />
+        <p className="text-lg font-semibold text-custom-orange dark:text-custom-orange">
+          Loading...
+        </p>
+      </div>
+    </div>
+  );
+});
+
+// Main Component
 export default function DynamicHomeManager() {
   const [homeData, setHomeData] = useState(INITIAL_HOME_DATA);
   const [isEditing, setIsEditing] = useState(false);
@@ -164,7 +156,6 @@ export default function DynamicHomeManager() {
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch home data
   const fetchHomeData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -191,10 +182,10 @@ export default function DynamicHomeManager() {
   }, []);
 
   useEffect(() => {
+    document.title = "Edit Home | Admin Dashboard";
     fetchHomeData();
   }, [fetchHomeData]);
 
-  // Update nested field
   const updateField = useCallback((path, value) => {
     setEditData((prev) => {
       const newData = { ...prev };
@@ -211,7 +202,6 @@ export default function DynamicHomeManager() {
     });
   }, []);
 
-  // Tech stack operations
   const addTechStack = useCallback(() => {
     setEditData((prev) => ({
       ...prev,
@@ -244,7 +234,6 @@ export default function DynamicHomeManager() {
     }));
   }, []);
 
-  // Save data
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
@@ -270,6 +259,17 @@ export default function DynamicHomeManager() {
         setEditData(normalizedData);
         setBackendId(savedData._id);
         setIsEditing(false);
+
+        // Success notification
+        const notification = document.createElement("div");
+        notification.className =
+          "fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-in";
+        notification.textContent = "Changes saved successfully!";
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
       }
     } catch (err) {
       console.error("Failed to save home data:", err);
@@ -300,52 +300,88 @@ export default function DynamicHomeManager() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black p-4 sm:p-8">
+    <div className="min-h-screen w-full bg-white dark:bg-bg p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Home Page Manager
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Manage your portfolio homepage content
-            </p>
-          </div>
-          <div className="flex gap-3">
-            {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                disabled={loading}
-              >
-                <FaEdit /> Edit Content
-              </button>
-            ) : (
-              <>
+        <div className="bg-white dark:bg-card rounded-xl shadow-md border border-gray-100 dark:border-gray-800 p-6 mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Edit Home Page
+              </h1>
+              <div className="h-1 w-24 bg-gradient-to-r from-custom-orange to-custom-blue rounded-full mb-2" />
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage your portfolio homepage content
+              </p>
+            </div>
+            <div className="flex gap-3">
+              {!isEditing ? (
                 <button
-                  onClick={handleSave}
-                  className={`flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg ${
-                    isSaving ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  disabled={isSaving}
+                  onClick={handleEdit}
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-custom-orange to-custom-blue hover:from-custom-orange/90 hover:to-custom-blue/90 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
+                  disabled={loading}
                 >
-                  <FaSave /> {isSaving ? "Saving..." : "Save Changes"}
+                  <FaEdit /> Edit Content
                 </button>
-                <button
-                  onClick={handleCancel}
-                  className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                  disabled={isSaving}
-                >
-                  <FaTimes /> Cancel
-                </button>
-              </>
-            )}
+              ) : (
+                <>
+                  <button
+                    onClick={handleSave}
+                    className={`flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg ${
+                      isSaving ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={isSaving}
+                  >
+                    <FaSave /> {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
+                    disabled={isSaving}
+                  >
+                    <FaTimes /> Cancel
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Error Message */}
         {error && (
-          <ErrorMessage message={error} onDismiss={() => setError(null)} />
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <svg
+                  className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <h3 className="font-semibold text-red-800 dark:text-red-300">
+                    Error
+                  </h3>
+                  <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                    {error}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Hero Section */}
@@ -355,12 +391,14 @@ export default function DynamicHomeManager() {
             value={data.hero.greeting}
             onChange={(e) => updateField("hero.greeting", e.target.value)}
             isEditing={isEditing}
+            required
           />
           <InputField
             label="Main Heading"
             value={data.hero.mainHeading}
             onChange={(e) => updateField("hero.mainHeading", e.target.value)}
             isEditing={isEditing}
+            required
           />
           <InputField
             label="Highlighted Text"
@@ -384,12 +422,14 @@ export default function DynamicHomeManager() {
             onChange={(e) => updateField("hero.description", e.target.value)}
             isEditing={isEditing}
             multiline
+            required
           />
           <InputField
             label="Profile Image URL"
             value={data.hero.profileImg}
             onChange={(e) => updateField("hero.profileImg", e.target.value)}
             isEditing={isEditing}
+            required
           />
           <InputField
             label="Profile Image Alt Text"
@@ -400,7 +440,7 @@ export default function DynamicHomeManager() {
 
           {/* Tech Stack */}
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
               Tech Stack
             </label>
             <div className="space-y-2">
@@ -412,7 +452,7 @@ export default function DynamicHomeManager() {
                         type="text"
                         value={tech}
                         onChange={(e) => updateTechStack(index, e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all"
+                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-custom-orange focus:border-custom-orange transition-all"
                         placeholder="Technology name"
                       />
                       <button
@@ -424,7 +464,7 @@ export default function DynamicHomeManager() {
                       </button>
                     </>
                   ) : (
-                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-custom-orange/10 dark:bg-custom-orange/20 text-custom-orange dark:text-custom-orange rounded-full text-sm font-medium">
                       {tech}
                     </span>
                   )}
@@ -433,7 +473,7 @@ export default function DynamicHomeManager() {
               {isEditing && (
                 <button
                   onClick={addTechStack}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors mt-3"
+                  className="flex items-center gap-2 px-4 py-2 bg-custom-blue hover:bg-custom-blue/90 text-white rounded-lg transition-colors mt-3"
                 >
                   <FaPlus /> Add Technology
                 </button>
@@ -461,6 +501,7 @@ export default function DynamicHomeManager() {
             value={data.cta.resumeLink}
             onChange={(e) => updateField("cta.resumeLink", e.target.value)}
             isEditing={isEditing}
+            required
           />
         </Section>
 
@@ -472,10 +513,10 @@ export default function DynamicHomeManager() {
                 key={index}
                 label={
                   stat.icon === "FaCode"
-                    ? "Projects"
+                    ? "Projects Count"
                     : stat.icon === "FaLaptopCode"
-                    ? "Technologies"
-                    : "Years"
+                    ? "Technologies Count"
+                    : "Years of Experience"
                 }
                 value={stat.label}
                 onChange={(e) => {
@@ -492,7 +533,7 @@ export default function DynamicHomeManager() {
         </Section>
 
         {/* Education Section */}
-        <Section title="Education">
+        <Section title="Education Section">
           <InputField
             label="Section Title"
             value={data.education.sectionTitle}
@@ -512,6 +553,23 @@ export default function DynamicHomeManager() {
           />
         </Section>
       </div>
+
+      <style>{`
+        @keyframes slide-in {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        .animate-slide-in {
+          animation: slide-in 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
